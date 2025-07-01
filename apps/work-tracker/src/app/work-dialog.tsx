@@ -17,11 +17,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { FaCopy, FaUmbrellaBeach } from 'react-icons/fa';
 import { HiEmojiSad, HiHome, HiMinus, HiPlus } from 'react-icons/hi';
-import Button from '../../components/button/button';
-import Select from '../../components/select/select';
-import useKeyboardShortcut from '../use-keyboard-shortcut';
+import Button from '../components/button/button';
+import Select from '../components/select/select';
+import useKeyboardShortcut from './use-keyboard-shortcut';
 import { parseWorkTimes } from '@myin/work-time-parser';
-import { Diary } from '../diary/diary';
+import { Diary } from './diary';
 
 export interface WorkDialogProps {
   date: Date;

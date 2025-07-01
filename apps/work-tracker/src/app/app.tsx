@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import Calendar from '../components/calendar/calendar';
-import WorkDialog from './work-dialog/work-dialog';
+import WorkDialog from './work-dialog';
 import Button from '../components/button/button';
-import Login from './login/login';
+import Login from './login';
 import {
   WorkDay,
   FullDayType,
@@ -23,9 +23,10 @@ import {
   isBefore,
 } from 'date-fns';
 import useKeyboardShortcut from './use-keyboard-shortcut';
-import { Info } from './info/Info';
+import { Info } from './Info';
 import { each, flatMap, groupBy, sum } from 'lodash';
 import { getWorkHoursInMinutes } from '@myin/work-time-parser';
+import { YearlySummary } from './yearly-summary';
 
 const DARK_THEME_KEY = 'myin-work-tracker-dark-mode';
 const LOGIN_TOKEN_KEY = 'myin-work-tracker-login-token';
@@ -51,6 +52,8 @@ export function App() {
   const [darkMode, setDarkMode] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches
   );
+
+  const [showSummary, setShowSummary] = useState(false);
 
   const hasWorkDays = Object.keys(workDays).length;
   const monthLocked = Object.values(workDays).some((day) => day.locked);
@@ -312,6 +315,9 @@ export function App() {
                     onSetDarkMode={onDarkModeChange}
                     onLogout={onTokenLogout}
                   />
+                  <Button onClick={() => setShowSummary(!showSummary)}>
+                    Summary
+                  </Button>
                 </div>
               )}
               header={() => (
@@ -357,6 +363,12 @@ export function App() {
                   ''}
               </div>
             </div>
+
+            <YearlySummary
+              open={showSummary}
+              date={selectedDate}
+              client={getClient()}
+            />
           </>
         )) ||
           loginButton}

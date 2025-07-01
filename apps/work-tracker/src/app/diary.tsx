@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { debounce } from 'lodash';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 
 const DIARY_STORAGE_KEY = 'myin-work-tracker-diary-cache';
 

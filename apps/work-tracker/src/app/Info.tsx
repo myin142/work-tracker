@@ -7,7 +7,7 @@ import {
   MdOutlineDarkMode,
   MdOutlineLightMode,
 } from 'react-icons/md';
-import Button from '../../components/button/button';
+import Button from '../components/button/button';
 
 interface InfoProps {
   info?: UserInfo | null;
