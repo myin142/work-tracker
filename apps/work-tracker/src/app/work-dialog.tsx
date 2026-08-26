@@ -12,7 +12,6 @@ import {
   intervalToDuration,
   isToday,
   startOfToday,
-  sub,
 } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { FaCopy, FaUmbrellaBeach } from 'react-icons/fa';
@@ -121,10 +120,22 @@ export function WorkDialog({
   };
 
   const workTimeIntervals = (): Interval[] =>
-    workTimes.map((w) => ({
-      start: parseTime(w.timeFrom),
-      end: parseTime(w.timeTo),
-    }));
+    workTimes.flatMap((w) => {
+      const timeFrom = parseTime(w.timeFrom);
+      const timeTo = parseTime(w.timeTo);
+
+      if (w.breakFrom && w.breakTo) {
+        const breakFrom = parseTime(w.breakFrom);
+        if (breakFrom < timeTo) {
+          return [
+            { start: timeFrom, end: breakFrom },
+            { start: parseTime(w.breakTo), end: timeTo },
+          ];
+        }
+      }
+
+      return [{ start: timeFrom, end: timeTo }];
+    });
 
   const breakIntervals = (): Interval[] =>
     workTimes
@@ -137,12 +148,8 @@ export function WorkDialog({
   const totalTimes = (): string => {
     const time = intervalTotalTime(workTimeIntervals());
     const breakTime = intervalTotalTime(breakIntervals());
-    const subtracted = sub(
-      time,
-      intervalToDuration({ start: startOfToday(), end: breakTime })
-    );
 
-    return `${formatDuration(subtracted)} / ${formatDuration(breakTime)}`;
+    return `${formatDuration(time)} / ${formatDuration(breakTime)}`;
   };
 
   return (

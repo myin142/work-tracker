@@ -172,25 +172,20 @@ export const getWorkHoursInDay = (times: WorkTime[]) => {
   const start = startOfDay(new Date());
   const end = times
     .map((time) => {
+      const timeFrom = parseTime(time.timeFrom) as Date;
+      const timeTo = parseTime(time.timeTo) as Date;
+
       if (time.breakFrom && time.breakTo) {
-        return [
-          {
-            start: parseTime(time.timeFrom) as Date,
-            end: parseTime(time.breakFrom) as Date,
-          },
-          {
-            start: parseTime(time.breakTo) as Date,
-            end: parseTime(time.timeTo) as Date,
-          },
-        ];
+        const breakFrom = parseTime(time.breakFrom) as Date;
+        if (breakFrom < timeTo) {
+          return [
+            { start: timeFrom, end: breakFrom },
+            { start: parseTime(time.breakTo) as Date, end: timeTo },
+          ];
+        }
       }
 
-      return [
-        {
-          start: parseTime(time.timeFrom) as Date,
-          end: parseTime(time.timeTo) as Date,
-        },
-      ];
+      return [{ start: timeFrom, end: timeTo }];
     })
     .reduce((prev, curr) => prev.concat(curr), [])
     .reduce((prev, curr) => add(prev, intervalToDuration(curr)), start);

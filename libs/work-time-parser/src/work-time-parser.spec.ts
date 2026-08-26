@@ -1,5 +1,5 @@
 import { WorkTime } from '@myin/models';
-import { parseWorkTimes } from './work-time-parser';
+import { getWorkHoursInDay, parseWorkTimes } from './work-time-parser';
 
 describe('Parse Work Time', () => {
   test('should parse work time', () => {
@@ -219,5 +219,40 @@ describe('Parse Work Time', () => {
         breakTo: '14:30',
       } as WorkTime),
     ]);
+  });
+});
+
+describe('getWorkHoursInDay', () => {
+  test('should subtract a break nested inside a single work span', () => {
+    expect(
+      getWorkHoursInDay([
+        {
+          timeFrom: '08:00',
+          timeTo: '15:00',
+          breakFrom: '10:00',
+          breakTo: '12:00',
+          projectId: 1,
+        },
+      ])
+    ).toBe('05:00');
+  });
+
+  test('should not double subtract a break already excluded from the span', () => {
+    expect(
+      getWorkHoursInDay([
+        {
+          timeFrom: '08:00',
+          timeTo: '14:00',
+          breakFrom: '14:00',
+          breakTo: '14:30',
+          projectId: 1,
+        },
+        {
+          timeFrom: '14:30',
+          timeTo: '15:30',
+          projectId: 2,
+        },
+      ])
+    ).toBe('07:00');
   });
 });
