@@ -429,6 +429,66 @@ describe('workTimeMapper', () => {
       ]);
     });
 
+    it('should map timespans with a break between two different projects', () => {
+      const workDays = mapToWorkDay(
+        [
+          {
+            type: TimeSpanTypeEnum.Work,
+            fromTime: '08:00',
+            toTime: '14:00',
+            date: '2020-01-01',
+            id: 1,
+          },
+          {
+            type: TimeSpanTypeEnum.Break,
+            fromTime: '14:00',
+            toTime: '14:30',
+            date: '2020-01-01',
+            id: 1,
+          },
+          {
+            type: TimeSpanTypeEnum.Work,
+            fromTime: '14:30',
+            toTime: '15:30',
+            date: '2020-01-01',
+            id: 1,
+          },
+        ],
+        [
+          {
+            date: '2020-01-01',
+            project: 1,
+            timeSpans: [{ fromTime: '08:00', toTime: '14:00' }],
+          },
+          {
+            date: '2020-01-01',
+            project: 2,
+            timeSpans: [{ fromTime: '14:30', toTime: '15:30' }],
+          },
+        ]
+      );
+
+      expect(workDays).toEqual([
+        expect.objectContaining({
+          date: new Date('2020-01-01'),
+          workTimes: [
+            {
+              timeFrom: '08:00',
+              timeTo: '14:00',
+              projectId: 1,
+              breakFrom: '14:00',
+              breakTo: '14:30',
+            },
+            {
+              timeFrom: '14:30',
+              timeTo: '15:30',
+              projectId: 2,
+            },
+          ],
+        }),
+      ]);
+    });
+
     it('should map full days', () => {
       const workDays = mapToWorkDay(
         [

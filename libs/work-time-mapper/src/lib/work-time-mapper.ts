@@ -249,26 +249,36 @@ export function mapToWorkDay(
           currentTime.timeTo = time.toTime;
           days[date].workTimes.push(currentTime);
           currentTime = null;
-        } else {
-          const matchingBreak = breaks.find(
-            (b: TimeSpanWithID) => b.fromTime === time.toTime
-          );
-          if (matchingBreak) {
-            currentTime = {
-              timeFrom: time.fromTime,
-              timeTo: time.toTime,
-              breakFrom: matchingBreak.fromTime,
-              breakTo: matchingBreak.toTime,
-              projectId: project.project,
-            };
-          } else {
-            days[date].workTimes.push({
-              timeFrom: time.fromTime,
-              timeTo: time.toTime,
-              projectId: project.project,
-            });
-          }
+          continue;
         }
+
+        if (currentTime) {
+          days[date].workTimes.push(currentTime);
+          currentTime = null;
+        }
+
+        const matchingBreak = breaks.find(
+          (b: TimeSpanWithID) => b.fromTime === time.toTime
+        );
+        if (matchingBreak) {
+          currentTime = {
+            timeFrom: time.fromTime,
+            timeTo: time.toTime,
+            breakFrom: matchingBreak.fromTime,
+            breakTo: matchingBreak.toTime,
+            projectId: project.project,
+          };
+        } else {
+          days[date].workTimes.push({
+            timeFrom: time.fromTime,
+            timeTo: time.toTime,
+            projectId: project.project,
+          });
+        }
+      }
+
+      if (currentTime) {
+        days[date].workTimes.push(currentTime);
       }
     });
   });
